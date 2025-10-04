@@ -1,5 +1,5 @@
 // netlify/functions/once.js
-let usedTokens = new Set(); // Resets on redeploy; sufficient for short-term one-time links
+let usedTokens = new Set(); // Resets on redeploy; ok for short-lived links
 
 export async function handler(event) {
   const params = event.queryStringParameters || {};
@@ -29,8 +29,8 @@ export async function handler(event) {
 
   usedTokens.add(token);
 
-  // Redirect to your message page hosted on Netlify
-  const target = 'https://murdermysteryhia.netlify.app/';
+  // Redirect to a token-specific path so the page can burn that specific token locally
+  const target = `https://murdermysteryhia.netlify.app/message/${encodeURIComponent(token)}`;
   return {
     statusCode: 302,
     headers: {

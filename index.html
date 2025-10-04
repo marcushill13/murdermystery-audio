@@ -35,27 +35,27 @@
     <h1>🔊 One-Time Voice Message</h1>
     <p>This message will self-destruct after listening.</p>
     <audio id="player" controls>
-      <!-- Place your audio file next to this HTML and name it 'voice.mp3' -->
-      <source src="voice.mp3" type="audio/mpeg">
+      <source src="/voice.mp3" type="audio/mpeg">
       Your browser does not support the audio element.
     </audio>
   </div>
   <script>
     const container = document.getElementById('container');
     const player = document.getElementById('player');
+    const burnKey = 'burned:' + location.pathname; // unique per /message/<token>
 
-    if (sessionStorage.getItem(location.href)) {
+    if (localStorage.getItem(burnKey)) {
       lockMessage();
     }
 
     player.addEventListener('ended', () => {
-      sessionStorage.setItem(location.href, 'burned');
+      try { localStorage.setItem(burnKey, '1'); } catch {}
       lockMessage();
+      try { history.replaceState(null, '', '/expired'); } catch {}
     });
 
     function lockMessage() {
       container.innerHTML = '<p class="destroyed">💥 This message has been destroyed.</p>';
-      try { history.replaceState(null, '', location.pathname); } catch {}
     }
   </script>
 </body>

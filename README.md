@@ -1,37 +1,17 @@
-# Netlify One-Time URL + Self-Destructing Audio (Page-Only)
+# Netlify One-Time URL + Token-Scoped Burn (v2)
 
-This package gives you:
-- `index.html` — a simple audio page that "self-destructs" **locally** after one listen (per browser session)
-- `netlify/functions/once.js` — a Netlify Function that turns any URL into a **one-time** link (page-only)
+**What changed:** 
+- Function now redirects to `/message/<token>` (unique path per token).
+- Page uses `localStorage` keyed by `location.pathname`, so **refreshes and new tabs** stay burned for that token.
+- `_redirects` ensures any path (like `/message/abc`) serves `index.html` (SPA-style).
 
-Your redirect is already set to:
-`https://murdermysteryhia.netlify.app/`
+## Use
 
-## Quick Use
+1) Put your audio at the project root named **`voice.mp3`**.
+2) Deploy to Netlify.
+3) Share a one-time URL like:
+   `https://murdermysteryhia.netlify.app/.netlify/functions/once?t=abc123`
+   - First open → redirects to `/message/abc123`, plays once, then burns.
+   - Refresh/new tab → still shows **destroyed** for that token (because of localStorage key).
 
-1) **Add your audio**
-   - Put your audio file next to `index.html` and name it **`voice.mp3`**.
-   - Folder structure:
-     ```
-     your-deploy/
-     ├── index.html
-     ├── voice.mp3        ⟵ your file here
-     └── netlify/
-         └── functions/
-             └── once.js
-     ```
-
-2) **Deploy**
-   - Zip the folder above and upload to Netlify (Drop or your connected repo).
-   - Netlify will detect the function automatically.
-
-3) **Share a one-time URL**
-   - Format: `https://murdermysteryhia.netlify.app/.netlify/functions/once?t=MYTOKEN`
-   - Replace `MYTOKEN` with any unique string (e.g., `abc123`, `user42`, etc.).
-   - First open: redirects to your page.
-   - Second open: shows **Link expired**.
-
-## Notes
-- The "one-time" tracking is **in-memory** on the function instance. If you redeploy or the function scales down/up, tokens may reset. For a handful of short-lived links, this is usually fine.
-- For persistent tokens across deploys, connect a small datastore (Fauna, Supabase, Upstash Redis, etc.) and replace the `Set()` with reads/writes to that store.
-- The page-level "self-destruct" uses `sessionStorage` so the **same tab** cannot replay after it ends. Different devices/tabs can still listen once via the one-time URL.
+Note: This is still **page-only** protection; users can always record the audio during first play.
