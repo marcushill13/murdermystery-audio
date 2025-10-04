@@ -30,7 +30,7 @@ export async function handler(event) {
   usedTokens.add(token);
 
   // Redirect to a token-specific path so the page can burn that specific token locally
-  const target = `https://murdermysteryhia.netlify.app/message/${encodeURIComponent(token)}`;
+  const target = `https://hiamurdermystery.netlify.app/message/${encodeURIComponent(token)}`;
   return {
     statusCode: 302,
     headers: {
