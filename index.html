@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>One-Time Voice Message</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      background: #0b0b0c;
+      color: white;
+      font-family: system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #16161a;
+      padding: 24px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    h1 { font-size: 1.3rem; margin: 0 0 .5rem; }
+    p { margin: 0; opacity: .85; }
+    audio { width: 100%; margin-top: 12px; }
+    .destroyed { font-size: 1.1rem; color: #ff6b6b; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="card" id="container">
+    <h1>🔊 One-Time Voice Message</h1>
+    <p>This message will self-destruct after listening.</p>
+    <audio id="player" controls>
+      <!-- Place your audio file next to this HTML and name it 'voice.mp3' -->
+      <source src="voice.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+  <script>
+    const container = document.getElementById('container');
+    const player = document.getElementById('player');
+
+    if (sessionStorage.getItem(location.href)) {
+      lockMessage();
+    }
+
+    player.addEventListener('ended', () => {
+      sessionStorage.setItem(location.href, 'burned');
+      lockMessage();
+    });
+
+    function lockMessage() {
+      container.innerHTML = '<p class="destroyed">💥 This message has been destroyed.</p>';
+      try { history.replaceState(null, '', location.pathname); } catch {}
+    }
+  </script>
+</body>
+</html>
